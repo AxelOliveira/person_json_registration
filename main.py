@@ -7,13 +7,19 @@ class Person:
         self.age = age
 
     def display(self):
-        return f'Nome: {self.name} | Idade: {self.age}.'
+        return f'Nome: {self.name} | Idade: {self.age} anos.'
+    
+    def to_dict(self):
+        return {
+            'name': self.name,
+            'age': self.age
+        }
     
 FILE_NAME = 'person_registration.json'
 
 def is_duplicate(name, age, contacts):
     for contact in contacts:
-        if contact['name'] == name and contact['age'] == age:
+        if contact['name'].lower() == name.lower() and contact['age'] == age:
             return True
     return False
 
@@ -52,45 +58,62 @@ def list_contacts(contacts):
         print(f'\t{contact.display()}')
 
 def search_contact(contacts):
-    search_name = str(input('Digite o nome do contato que deseja procurar: ').strip())
+    search_name = input('Digite o nome do contato que deseja procurar: ').lower().strip()
     found = False
+
     for contact in contacts:
-        if search_name == contact.name:
+        if search_name == contact.name.lower():
             found = True
             print(contact.display())
 
     if not found:
             print('Contato não encontrado')
 
-while True:
-    print('\nComandos: adicionar contato, listar contatos, buscar contatos ou sair.')
-    user_command = input('Digite um comando: ').lower()
+def normalize_name(name):
+    return name.strip().title()
 
-    if user_command == 'adicionar contato':
-        name = input('Digite o nome do contato: ')
-        age = int(input('Digite a idade do contato: '))
+while True:
+    print('\n===== SISTEMA DE CONTATOS =====')
+    print('1 - Adicionar contato')
+    print('2 - Listar contatos')
+    print('3 - Buscar contatos')
+    print('4 - Sair')
+
+    user_command = input('Digite um comando: ')
+
+    if user_command == '1':
+        name = normalize_name(input('Digite o nome do contato: '))
+        try: 
+            age = int(input('Digite a idade do contato: '))
+            if age < 0:
+                print('Idade inválida.')
+                continue
+
+        except ValueError:
+            print('Digite somente números!')
+            continue
 
         contacts = load_contacts()
 
-        if is_duplicate(name, age, [vars(c) for c in contacts]):
+        if is_duplicate(name, age, [c.to_dict() for c in contacts]):
             print('Contato já existe!')
 
         else:
             person = Person(name, age)
-            save_contacts([vars(person)])
+            save_contacts([person.to_dict()])
             print('Contato salvo com sucesso!')
             
-    elif user_command == 'listar contatos':
+    elif user_command == '2':
         contacts = load_contacts()
         list_contacts(contacts)
 
-    elif user_command == 'sair':
-        print('Saindo do sistema...')
-        break
-
-    elif user_command == 'buscar contatos':
+    elif user_command == '3':
         contacts = load_contacts()
         search_contact(contacts)
+
+    elif user_command == '4':
+        print('Saindo do sistema...')
+        break
 
     else:
         print('Comando inválido.')
