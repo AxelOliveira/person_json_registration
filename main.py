@@ -51,8 +51,19 @@ def list_contacts(contacts):
     for contact in contacts:
         print(f'\t{contact.display()}')
 
+def search_contact(contacts):
+    search_name = str(input('Digite o nome do contato que deseja procurar: ').strip())
+    found = False
+    for contact in contacts:
+        if search_name == contact.name:
+            found = True
+            print(contact.display())
+
+    if not found:
+            print('Contato não encontrado')
+
 while True:
-    print('\nComandos: adicionar contato, listar contatos ou sair.')
+    print('\nComandos: adicionar contato, listar contatos, buscar contatos ou sair.')
     user_command = input('Digite um comando: ').lower()
 
     if user_command == 'adicionar contato':
@@ -76,6 +87,10 @@ while True:
     elif user_command == 'sair':
         print('Saindo do sistema...')
         break
+
+    elif user_command == 'buscar contatos':
+        contacts = load_contacts()
+        search_contact(contacts)
 
     else:
         print('Comando inválido.')
