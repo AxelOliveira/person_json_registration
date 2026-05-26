@@ -15,6 +15,31 @@ class Person:
             'age': self.age
         }
     
+    @property
+    def name(self):
+        return self._name
+    
+    @name.setter
+    def name(self, value):
+        name = value.strip().title()
+
+        if name == '':
+            raise ValueError('Nome vazio')
+        self._name = name
+
+    @property
+    def age(self):
+        return self._age
+    
+    @age.setter
+    def age(self, value):
+        age = value
+
+        if age <= 0:
+            raise ValueError('Idade inválida')
+        self._age = age  
+
+    
 FILE_NAME = 'person_registration.json'
 
 def is_duplicate(name, age, contacts):
